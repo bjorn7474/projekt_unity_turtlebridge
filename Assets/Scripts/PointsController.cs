@@ -8,6 +8,7 @@ public class PointsController : MonoBehaviour
 
     TextMeshPro textMesh;
     //int points = 0;
+    private int points;
 
     private void Start()
     {
@@ -24,7 +25,8 @@ public class PointsController : MonoBehaviour
 
     public void SetPoint(int points)
     {
-        textMesh.SetText(points.ToString());
+        this.points += points;
+        textMesh.SetText(this.points.ToString());
 
     }
 

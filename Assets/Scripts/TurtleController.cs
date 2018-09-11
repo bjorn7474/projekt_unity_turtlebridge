@@ -65,12 +65,13 @@ public class TurtleController : MonoBehaviour
 
 
     // Update is called once per frame
+
     void Update()
     {
 
 
-        randomDiveNmb = Random.Range(1, 200);
-        if (randomDiveNmb >= 199 && !isDiving && !turtleSleep)
+        randomDiveNmb = Random.Range(1, 100);
+        if (randomDiveNmb >= 99 && !isDiving && !turtleSleep)
         {
             
             isDiving = true;
@@ -110,10 +111,7 @@ public class TurtleController : MonoBehaviour
         if (dir == SOUTH && beneath_surface_idx == 0)
         {
 
-            //positions.GetChild(incr_pos).transform.Rotate(new Vector3(0, 0, 1));
-            //if (Mathf.Round(transform.eulerAngles.z) == 180) { transform.Rotate(new Vector3(0, 0, -180)); }
-            //positions.GetChild(incr_pos).gameObje = Color.yellow; ;
-            //transform.GetComponent<SpriteRenderer>().color = Color.yellow;
+      
 
 
         } else if (dir == SOUTH && beneath_surface_idx == 2)

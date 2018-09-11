@@ -15,6 +15,10 @@ public class CarrierController : MonoBehaviour {
 
     private const int N_TURTLES = 4;
     private const int N_POS_BENEATH_SURFACE = 4;
+    bool hasPackage = true; // han har ett paket som nu ska lämnas på andra sidan.
+
+    
+
 
     public Texture[] myTextures = new Texture[1];
 
@@ -29,6 +33,7 @@ public class CarrierController : MonoBehaviour {
     private int divingTurtlePosition = -1; // positionen för sköldpaddan som dyker på den platsen där bäraren befinner sig
 
     public PointsController pointsController;
+    public LifeViewController lifeViewController;
   
 
     private void OnEnable()
@@ -46,7 +51,14 @@ public class CarrierController : MonoBehaviour {
     private void Start()
     {
 
-        
+
+        //instansiera gameobjektet Points
+        GameObject points = GameObject.Find("Points");
+        pointsController = points.GetComponent<PointsController>();
+
+        //instansiera gameobjektet Lives
+        GameObject lives = GameObject.Find("Lives");
+        lifeViewController = lives.GetComponent<LifeViewController>();
 
         transform.position = positions[currentPosition].position;
 
@@ -69,10 +81,11 @@ public class CarrierController : MonoBehaviour {
 
             Debug.Log("position = " + currentPosition);
 
-            //int idx = turtles[0].GetComponent<TurtleController>().getBeneathSurfaceIdx;
+            leaveRetreivePackage();
+
         }
 
-        //surfaceChecker();
+      
     }
 
     void Input_OnRightPressed()
@@ -82,9 +95,10 @@ public class CarrierController : MonoBehaviour {
             currentPosition++;
             transform.position = positions[currentPosition].position;
 
+            leaveRetreivePackage();
         }
 
-        //surfaceChecker();
+      
     }
 
 
@@ -102,6 +116,7 @@ public class CarrierController : MonoBehaviour {
             }
 
 
+            //kontrollerar om spelaren är ovanpå en sköldpadda som dyker. Dyker gör den om posTurtle != 0
             for (int i = 0; i < N_TURTLES; i++)
             {
 
@@ -132,7 +147,7 @@ public class CarrierController : MonoBehaviour {
             if (beneathSurfIdx > N_POS_BENEATH_SURFACE - 1)
             {
                 beneathSurfIdx = 0;
-                Debug.Log("!!!!!!!!!!!!!!!!!!!");
+             
                 dead = true;
 
             }
@@ -145,7 +160,6 @@ public class CarrierController : MonoBehaviour {
                 case 0:
                     transform.position = diePositions2[beneathSurfIdx].position;
                    
-                  
                     break;
                 case 1:
                     transform.position = diePositions3[beneathSurfIdx].position;
@@ -163,12 +177,18 @@ public class CarrierController : MonoBehaviour {
         }
 
         if (dead)
+        {
+            decreaseLife();
             resetGame();
+
+        }
+
+            
 
         frameCnt++;
 
 
-        checkPoints();
+     
 
     }
 
@@ -178,20 +198,41 @@ public class CarrierController : MonoBehaviour {
         transform.position = positions[currentPosition].position;
         dead = false;
         isDying = false;
+        hasPackage = true;
         divingTurtlePosition = -1;
         beneathSurfIdx = 0;
 
     }
 
-    private void checkPoints()
+    private void leaveRetreivePackage()
     {
-
-        if (currentPosition == 4)
+        
+        // paketet lämnas vid andra änden och sätts till false - för att få ny poäng måste han återvända till den andra landsänden igen för att hämta ett nytt paket.
+        if (currentPosition == 5 && hasPackage)
         {
             Debug.Log(currentPosition);
             pointsController.SetPoint(1);
+            hasPackage = false;
+
         }
 
+        if (currentPosition == 0)
+            hasPackage = true;
+
+        
+
+    }
+
+    private void decreaseLife()
+    {
+
+        bool nextLife = lifeViewController.RemoveLife();
+        if (!nextLife)
+        {
+
+            lifeViewController.RestoreAllLives();
+        }
+        Debug.Log("GAMING = " + nextLife);
     }
 
 
